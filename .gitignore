@@ -1,0 +1,13 @@
+# Dossiers de sorties
+outputs/
+figures/
+
+# Fichiers lourds de simulation
+*.h5
+*.vtk
+*.binary
+
+# Python et système
+__pycache__/
+*.pyc
+.DS_Store
