@@ -32,14 +32,14 @@ def plot_static_results():
         energy_bins = energy_filter.bins
 
         # Énergies centrales géométriques et largeurs dE
-        energy_centers = np.sqrt(energy_bins[:, 0] * energy_bins[:, 1])
-        dE = energy_bins[:, 1] - energy_bins[:, 0]
+        energy_centers = np.sqrt(energy_bins[:, 0] * energy_bins[:, 1]) #centre d'intervalle d'énergie = moyenne géomtrique
+        dE = energy_bins[:, 1] - energy_bins[:, 0] #1ere colonne de energy_bins = bornes inférieures d'énergies des groupes, 2e colonne = bornes sup
 
         # Extraction robuste par CellFilter
-        cell_filter = tally_spec.find_filter(openmc.CellFilter)
+        cell_filter = tally_spec.find_filter(openmc.CellFilter) #le filtre sur le type de cellule (fuel, clad ou water)
         cell_ids = cell_filter.bins
 
-        flux_fuel_raw = tally_spec.get_slice(scores=['flux'], filters=[openmc.CellFilter], filter_bins=[(cell_ids[0],)]).mean.ravel()
+        flux_fuel_raw = tally_spec.get_slice(scores=['flux'], filters=[openmc.CellFilter], filter_bins=[(cell_ids[0],)]).mean.ravel() # cell_ids[0] = id de la cellule "fuel"
         flux_clad_raw = tally_spec.get_slice(scores=['flux'], filters=[openmc.CellFilter], filter_bins=[(cell_ids[1],)]).mean.ravel()
         flux_water_raw = tally_spec.get_slice(scores=['flux'], filters=[openmc.CellFilter], filter_bins=[(cell_ids[2],)]).mean.ravel()
 
@@ -70,8 +70,8 @@ def plot_static_results():
         flux_3d = tally_flux.get_values(scores=['flux']).reshape(mesh_flux.dimension[::-1]).transpose(2, 1, 0)
 
         # Moyenne axiale le long de Z (moyenné sur les axes X=0 et Y=1)
-        flux_1d_z = flux_3d.mean(axis=(0, 1))
-        z_coords = np.linspace(mesh_flux.lower_left[2], mesh_flux.upper_right[2], mesh_flux.dimension[2])
+        flux_1d_z = flux_3d.mean(axis=(0, 1)) #moyenne sur X et Y pour obtenir le profil axial en Z
+        z_coords = np.linspace(mesh_flux.lower_left[2], mesh_flux.upper_right[2], mesh_flux.dimension[2]) #50 points le long de l'axe Z
 
         plt.figure(figsize=(8, 4))
         plt.plot(z_coords, flux_1d_z, color='tab:blue', lw=2, label='Flux moyen')
@@ -83,7 +83,7 @@ def plot_static_results():
         plt.tight_layout()
         plt.savefig('figures/profil_flux_puissance_1d.png', dpi=300)
         plt.close()
-    except Exception as e:
+    except Exception as e: #si erreur lors de l'execution du bloc try ci dessus
         print(f"   -> Erreur sur le tracé du profil axial (Z) : {e}")
 
 
@@ -96,9 +96,8 @@ def plot_depletion_results():
 
     results = openmc.deplete.Results(depletion_file)
     
-    # Restauration du temps réel en jours puis conversion en mois
-    time_days = (results.get_times() / 86400.0) * 86400.0
-    time_months = time_days / 30.4167
+    time_days = results.get_times() #temps en jour
+    time_months = time_days / 30.4167 #temps en mois
 
     # A. Évolution du keff
     _, keff_matrix = results.get_keff()
@@ -118,10 +117,10 @@ def plot_depletion_results():
 
     # B. Évolution Isotopique
     try:
-        first_step = results[0]
-        burnable_mat_id = list(first_step.index_mat.keys())[0]
+        first_step = results[0] #pour accéder aux données du premier pas de déplétion, pour inspecter la structure initiale du modèle (notamment la liste des matériaux consommables)
+        burnable_mat_id = list(first_step.index_mat.keys())[0] #Récupère l'identifiant numérique (l'ID du matériau OpenMC) du combustible soumis à la déplétion.
 
-        _, atoms_u235 = results.get_atoms(burnable_mat_id, "U235")
+        _, atoms_u235 = results.get_atoms(burnable_mat_id, "U235") #tableau des temps ignoré renvoyé en première position
         _, atoms_pu239 = results.get_atoms(burnable_mat_id, "Pu239")
 
         plt.figure(figsize=(8, 4))
@@ -133,7 +132,7 @@ def plot_depletion_results():
         plt.yscale('log')
         plt.grid(True, which='both', ls='--', alpha=0.5)
         plt.legend()
-        plt.tight_layout()
+        plt.tight_layout() #ajuste automatiquement les marges et les espacements d'une figure pour que tous les éléments s'y insèrent proprement sans se chevaucher.
         plt.savefig("figures/isotopes_depletion.png", dpi=300)
         plt.close()
     except Exception as e:

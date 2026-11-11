@@ -2,6 +2,7 @@ import os
 import numpy as np
 import openmc
 
+
 def export_geometry_vtk(vtk_output_path):
     """
     Génère un fichier VTK représentant le champ 3D des matériaux (Géométrie).

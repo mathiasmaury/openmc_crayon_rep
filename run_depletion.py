@@ -24,7 +24,7 @@ def run_depletion_simulation():
     print("[Depletion] Initialisation de l'opérateur de déplétion...")
     operator = openmc.deplete.CoupledOperator(model, chain_file)
 
-    # Puissance thermique nominale du crayon : 17.3 kW (17 300 W)
+    # Puissance thermique nominale du crayon : 17.3 kW (17 300 W) (détermine la vitesse d'épuisement du combustible)
     power = 17300.0  # Watts
     
     # 1 an = 365 jours. 6 pas de 2 mois (~60.8333 jours par pas)

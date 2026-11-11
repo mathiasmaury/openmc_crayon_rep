@@ -103,7 +103,7 @@ def build_model():
     tally_spec.scores = ['flux']
     tallies.append(tally_spec)
 
-    # B. Maillage 3D raffiné (10 x 10 x 50 mailles axiales)
+    # B. Maillage 3D (10 x 10 x 50 mailles axiales)
     mesh = openmc.RegularMesh()
     mesh.dimension = [10, 10, 50]
     mesh.lower_left = [-pitch/2, -pitch/2, -h_z]
